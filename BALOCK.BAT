@@ -26,34 +26,20 @@ REM   CALL %BALOCK_HOME%\BALOCK.BAT
 
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-IF NOT "%CMDEXTVERSION%"=="2" ECHO CMDEXTVERSION MISMATCH
-IF NOT "%CMDEXTVERSION%"=="2" EXIT /B 1
-
+IF NOT "%CMDEXTVERSION%"=="2" (
+    ECHO CMDEXTVERSION MISMATCH
+    EXIT /B 1
+)
 GOTO :MAIN
 
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-:NOT_EXIST
-    ECHO BALOCK: NOT EXIST OF %*
-    PAUSE
-GOTO :EOF
-
-REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
 :MAIN
-
-IF NOT DEFINED BALOCK_HOME SET BALOCK_HOME=.
-
-REM BALOCK_LOGGER
-IF EXIST %BALOCK_HOME%\LOGGER.BAT (
-    SET BALOCK_LOGGER=%BALOCK_HOME%\LOGGER.BAT
-) ELSE (
-    CALL :NOT_EXIST %BALOCK_HOME%\LOGGER.BAT
-)
-
-REM BALOCK_EXECUTOR
-IF EXIST %BALOCK_HOME%\EXECUTOR.BAT (
-    SET BALOCK_EXECUTOR=%BALOCK_HOME%\EXECUTOR.BAT
-) ELSE (
-    CALL :NOT_EXIST %BALOCK_HOME%\EXECUTOR.BAT
+FOR %%I IN (LOGGER,EXECUTOR) DO (
+    IF EXIST "%~dp0%%I.BAT" (
+        SET BALOCK_%%I="%~dp0%%I.BAT"
+    ) ELSE (
+        ECHO BALOCK: NOT EXIST OF "%~dp0%%I.BAT"
+        PAUSE
+    )
 )
