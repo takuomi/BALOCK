@@ -65,69 +65,6 @@ ECHO BALOCK LOGGER:%*
 PAUSE
 GOTO :EOF
 
-REM LEVEL
-:LEVEL
-CALL :DEBUG [LOGGER:LEVEL] LEVEL: "%1"
-SET BALOCK_LOGGER_LOGLEVEL=
-IF NOT "%1"=="" (
-    IF %1 LEQ 6 (
-        IF %1 GEQ 1 (
-            SET BALOCK_LOGGER_LOGLEVEL=%1
-        )
-    ) ELSE (
-        IF "%1"=="TRACE" (
-            SET BALOCK_LOGGER_LOGLEVEL=1
-        )
-        IF "%1"=="DEBUG" (
-            SET BALOCK_LOGGER_LOGLEVEL=2
-        )
-        IF "%1"=="INFO" (
-            SET BALOCK_LOGGER_LOGLEVEL=3
-        )
-        IF "%1"=="WARN" (
-            SET BALOCK_LOGGER_LOGLEVEL=4
-        )
-        IF "%1"=="ERROR" (
-            SET BALOCK_LOGGER_LOGLEVEL=5
-        )
-        IF "%1"=="FATAL" (
-            SET BALOCK_LOGGER_LOGLEVEL=6
-        )
-    )
-) ELSE (
-    CALL :EXCEPTION LEVEL IllegalArgumentException: %1
-)
-IF NOT DEFINED BALOCK_LOGGER_LOGLEVEL (
-    CALL :EXCEPTION LEVEL IllegalArgumentException: %1
-)
-GOTO :EOF
-
-REM INITFILE
-:INITFILE
-IF NOT DEFINED BALOCK_LOGGER_LOGFILE (
-    CALL :EXCEPTION INITFILE IllegalArgumentException: %BALOCK_LOGGER_LOGFILE%
-    GOTO :EOF
-)
-TYPE nul 1>%BALOCK_LOGGER_LOGFILE%
-GOTO :EOF
-
-REM FILENAME
-:FILENAME
-CALL :DEBUG [LOGGER:FILENAME] FILENAME: "%~1"
-IF NOT "%~1"=="" (
-    SET BALOCK_LOGGER_LOGFILE="%~1"
-) ELSE (
-    CALL :EXCEPTION FILENAME IllegalArgumentException: "%1"
-)
-GOTO :EOF
-
-REM INIT
-:INIT
-CALL :LEVEL %1
-CALL :FILENAME %2
-CALL :INITFILE
-GOTO :EOF
-
 REM LOG [private]
 :LOG
 IF NOT DEFINED BALOCK_LOGGER_LOGLEVEL (
@@ -195,4 +132,67 @@ GOTO :EOF
 REM ECHO
 :ECHO
 SET BALOCK_LOGGER_ECHO=%*
+GOTO :EOF
+
+REM LEVEL
+:LEVEL
+CALL :DEBUG [LOGGER:LEVEL] LEVEL: "%1"
+SET BALOCK_LOGGER_LOGLEVEL=
+IF NOT "%1"=="" (
+    IF %1 LEQ 6 (
+        IF %1 GEQ 1 (
+            SET BALOCK_LOGGER_LOGLEVEL=%1
+        )
+    ) ELSE (
+        IF "%1"=="TRACE" (
+            SET BALOCK_LOGGER_LOGLEVEL=1
+        )
+        IF "%1"=="DEBUG" (
+            SET BALOCK_LOGGER_LOGLEVEL=2
+        )
+        IF "%1"=="INFO" (
+            SET BALOCK_LOGGER_LOGLEVEL=3
+        )
+        IF "%1"=="WARN" (
+            SET BALOCK_LOGGER_LOGLEVEL=4
+        )
+        IF "%1"=="ERROR" (
+            SET BALOCK_LOGGER_LOGLEVEL=5
+        )
+        IF "%1"=="FATAL" (
+            SET BALOCK_LOGGER_LOGLEVEL=6
+        )
+    )
+) ELSE (
+    CALL :EXCEPTION LEVEL IllegalArgumentException: %1
+)
+IF NOT DEFINED BALOCK_LOGGER_LOGLEVEL (
+    CALL :EXCEPTION LEVEL IllegalArgumentException: %1
+)
+GOTO :EOF
+
+REM FILENAME
+:FILENAME
+CALL :DEBUG [LOGGER:FILENAME] FILENAME: "%~1"
+IF NOT "%~1"=="" (
+    SET BALOCK_LOGGER_LOGFILE="%~1"
+) ELSE (
+    CALL :EXCEPTION FILENAME IllegalArgumentException: "%1"
+)
+GOTO :EOF
+
+REM INITFILE
+:INITFILE
+IF NOT DEFINED BALOCK_LOGGER_LOGFILE (
+    CALL :EXCEPTION INITFILE IllegalArgumentException: %BALOCK_LOGGER_LOGFILE%
+    GOTO :EOF
+)
+TYPE nul 1>%BALOCK_LOGGER_LOGFILE%
+GOTO :EOF
+
+REM INIT
+:INIT
+CALL :LEVEL %1
+CALL :FILENAME %2
+CALL :INITFILE
 GOTO :EOF
