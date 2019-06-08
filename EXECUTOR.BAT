@@ -31,26 +31,28 @@ REM     command  Executable command
 
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-CALL :SETENV
-FOR %%I IN (%BALOCK_PUBLIC_METHOD%) DO (
+SETLOCAL
+SET BALOCK_PUBLIC_LABEL=
+SET BALOCK_PUBLIC_LABELS=METHOD,COMMAND,SET_STDOUT_REDIRECT,SET_STDERR_REDIRECT
+FOR %%I IN (%BALOCK_PUBLIC_LABELS%) DO (
     IF "%1"=="%%I" (
-        CALL :%* & EXIT /B
+        SET BALOCK_PUBLIC_LABEL=TRUE
     )
 )
-CALL :EXCEPTION - IllegalArgumentException: %*
-EXIT /B
+IF NOT DEFINED BALOCK_PUBLIC_LABEL (
+    ENDLOCAL
+    CALL :EXCEPTION - IllegalArgumentException: %*
+    EXIT /B
+) ELSE (
+    ENDLOCAL
+    CALL :%* & EXIT /B
+)
 
 REM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-REM SETENV
-:SETENV
-SET BALOCK_CLASS_NAME=EXECUTOR
-SET BALOCK_PUBLIC_METHOD=METHOD,COMMAND,SET_STDOUT_REDIRECT,SET_STDERR_REDIRECT
-GOTO :EOF
-
 REM EXCEPTION
 :EXCEPTION
-ECHO BALOCK %BALOCK_CLASS_NAME%:%*
+ECHO BALOCK EXECUTOR:%*
 PAUSE
 GOTO :EOF
 
